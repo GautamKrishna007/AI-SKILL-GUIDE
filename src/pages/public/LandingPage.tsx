@@ -160,18 +160,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
             )}
           </div>
         </div>
-
-        {/* Right Header CTA on Landing */}
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            variant="primary"
-            size="xs"
-            className="font-bold text-xs px-3 py-1.5 rounded-lg shadow-xs"
-            onClick={() => onOpenAuth()}
-          >
-            Sign In / Join
-          </Button>
-        </div>
       </header>
 
       {/* Hero Section */}
@@ -206,62 +194,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
             >
               Sign In / Register
             </Button>
-          </div>
-
-          {/* Quick Mobile 1-Tap Persona Launcher */}
-          <div className="pt-3">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Or Explore with Instant 1-Click Demo:
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-2xl mx-auto">
-              <button
-                type="button"
-                onClick={() => loginAs('student')}
-                className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 hover:border-blue-300 hover:bg-blue-50/50 text-left transition-all shadow-2xs group cursor-pointer"
-              >
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <span className="text-sm">👨‍🎓</span>
-                  <span className="font-bold text-slate-900 text-xs group-hover:text-blue-700">Student</span>
-                </div>
-                <div className="text-[10px] text-slate-500 truncate">Skills & Jobs</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => loginAs('industry')}
-                className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all shadow-2xs group cursor-pointer"
-              >
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <span className="text-sm">🏢</span>
-                  <span className="font-bold text-slate-900 text-xs group-hover:text-emerald-700">Industry</span>
-                </div>
-                <div className="text-[10px] text-slate-500 truncate">Hiring & ATS</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => loginAs('faculty')}
-                className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 hover:border-indigo-300 hover:bg-indigo-50/50 text-left transition-all shadow-2xs group cursor-pointer"
-              >
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <span className="text-sm">🎓</span>
-                  <span className="font-bold text-slate-900 text-xs group-hover:text-indigo-700">Faculty</span>
-                </div>
-                <div className="text-[10px] text-slate-500 truncate">Cohort Heatmap</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => loginAs('admin')}
-                className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 hover:border-purple-300 hover:bg-purple-50/50 text-left transition-all shadow-2xs group cursor-pointer"
-              >
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <span className="text-sm">🏛️</span>
-                  <span className="font-bold text-slate-900 text-xs group-hover:text-purple-700">Admin</span>
-                </div>
-                <div className="text-[10px] text-slate-500 truncate">MoUs & KPIs</div>
-              </button>
-            </div>
           </div>
         </div>
 
