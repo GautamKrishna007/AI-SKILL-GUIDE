@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Sparkles,
   ArrowRight,
@@ -32,130 +32,236 @@ interface LandingPageProps {
 export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
   const { loginAs } = useApp();
   const [activePersonaTab, setActivePersonaTab] = useState<'student' | 'industry' | 'institution'>('student');
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
+  const demoRef = useRef<HTMLDivElement>(null);
+
+  // Click outside to close demo dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (demoRef.current && !demoRef.current.contains(event.target as Node)) {
+        setIsDemoOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-brand-500 selection:text-white">
       {/* Top Navigation */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3 sm:gap-5">
-          <div className="flex items-center gap-2.5">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-3 sm:px-8 py-3 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-5 min-w-0">
+          <div className="flex items-center gap-2 shrink-0">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <span className="font-extrabold text-slate-900 text-base tracking-tight flex items-center gap-1.5">
+              <span className="font-extrabold text-slate-900 text-sm sm:text-base tracking-tight flex items-center gap-1.5">
                 SkillBridge <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-brand-50 text-brand-700 border border-brand-200">AI</span>
               </span>
             </div>
           </div>
 
-          {/* Hover-Activated 1-Click Demo Dropdown on Top Left/Header */}
-          <div className="relative group hidden sm:block">
+          {/* Click + Hover Activated 1-Click Demo Dropdown (Visible on BOTH Mobile & Desktop) */}
+          <div
+            className="relative"
+            ref={demoRef}
+            onMouseEnter={() => setIsDemoOpen(true)}
+            onMouseLeave={() => setIsDemoOpen(false)}
+          >
             <button
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 group-hover:bg-brand-50 group-hover:text-brand-700 group-hover:border-brand-200 text-slate-700 border border-slate-200/80 transition-all cursor-pointer shadow-2xs"
+              type="button"
+              onClick={() => setIsDemoOpen(prev => !prev)}
+              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-50 hover:bg-brand-100/80 text-brand-700 border border-brand-200/90 transition-all cursor-pointer shadow-2xs"
+              aria-expanded={isDemoOpen}
+              aria-haspopup="true"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>⚡ 1-Click Demo</span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-600 group-hover:rotate-180 transition-transform duration-200" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span className="hidden xs:inline">⚡ 1-Click Demo</span>
+              <span className="xs:hidden">⚡ Demo</span>
+              <ChevronDown className={`w-3.5 h-3.5 text-brand-600 transition-transform duration-200 shrink-0 ${isDemoOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            {/* Hidden by default, smoothly revealed on hover */}
-            <div className="absolute left-0 top-full pt-1.5 w-64 hidden group-hover:block z-50 animate-fadeIn">
-              <div className="bg-white rounded-xl shadow-xl border border-slate-200/90 py-1.5 overflow-hidden">
-                <div className="px-3 py-1.5 border-b border-slate-100">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Instant Demo Personas
+            {/* Revealed on click or hover with safe mobile alignment */}
+            {isDemoOpen && (
+              <div className="absolute left-0 sm:left-0 top-full pt-1.5 w-64 max-w-[calc(100vw-24px)] z-50 animate-fadeIn">
+                <div className="bg-white rounded-xl shadow-xl border border-slate-200/90 py-1.5 overflow-hidden">
+                  <div className="px-3 py-1.5 border-b border-slate-100">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      Instant Demo Personas
+                    </div>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDemoOpen(false);
+                      loginAs('student');
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left hover:bg-blue-50 text-slate-700 hover:text-blue-900 transition-colors cursor-pointer"
+                  >
+                    <span className="p-1 rounded bg-blue-100 text-blue-700 font-bold text-xs shrink-0">👨‍🎓</span>
+                    <div className="min-w-0">
+                      <div className="font-bold text-slate-900 truncate">Student Demo</div>
+                      <div className="text-[10px] text-slate-500 truncate">Aarav Sharma • NIT CSE</div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDemoOpen(false);
+                      loginAs('industry');
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 transition-colors cursor-pointer"
+                  >
+                    <span className="p-1 rounded bg-emerald-100 text-emerald-700 font-bold text-xs shrink-0">🏢</span>
+                    <div className="min-w-0">
+                      <div className="font-bold text-slate-900 truncate">Industry Recruiter Demo</div>
+                      <div className="text-[10px] text-slate-500 truncate">Priya Sen • TechNova HR</div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDemoOpen(false);
+                      loginAs('faculty');
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left hover:bg-indigo-50 text-slate-700 hover:text-indigo-900 transition-colors cursor-pointer"
+                  >
+                    <span className="p-1 rounded bg-indigo-100 text-indigo-700 font-bold text-xs shrink-0">🎓</span>
+                    <div className="min-w-0">
+                      <div className="font-bold text-slate-900 truncate">Faculty Mentor Demo</div>
+                      <div className="text-[10px] text-slate-500 truncate">Dr. Ramesh Kumar • Prof</div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDemoOpen(false);
+                      loginAs('admin');
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left hover:bg-purple-50 text-slate-700 hover:text-purple-900 transition-colors cursor-pointer"
+                  >
+                    <span className="p-1 rounded bg-purple-100 text-purple-700 font-bold text-xs shrink-0">🏛️</span>
+                    <div className="min-w-0">
+                      <div className="font-bold text-slate-900 truncate">Institution Admin Demo</div>
+                      <div className="text-[10px] text-slate-500 truncate">Dr. Ananya Iyer • Dean</div>
+                    </div>
+                  </button>
                 </div>
-
-                <button
-                  onClick={() => loginAs('student')}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left hover:bg-blue-50 text-slate-700 hover:text-blue-900 transition-colors cursor-pointer"
-                >
-                  <span className="p-1 rounded bg-blue-100 text-blue-700 font-bold text-xs">👨‍🎓</span>
-                  <div>
-                    <div className="font-bold text-slate-900">Student Demo</div>
-                    <div className="text-[10px] text-slate-500">Aarav Sharma • NIT CSE</div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => loginAs('industry')}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left hover:bg-emerald-50 text-slate-700 hover:text-emerald-900 transition-colors cursor-pointer"
-                >
-                  <span className="p-1 rounded bg-emerald-100 text-emerald-700 font-bold text-xs">🏢</span>
-                  <div>
-                    <div className="font-bold text-slate-900">Industry Recruiter Demo</div>
-                    <div className="text-[10px] text-slate-500">Priya Sen • TechNova HR</div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => loginAs('faculty')}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left hover:bg-indigo-50 text-slate-700 hover:text-indigo-900 transition-colors cursor-pointer"
-                >
-                  <span className="p-1 rounded bg-indigo-100 text-indigo-700 font-bold text-xs">🎓</span>
-                  <div>
-                    <div className="font-bold text-slate-900">Faculty Mentor Demo</div>
-                    <div className="text-[10px] text-slate-500">Dr. Ramesh Kumar • Prof</div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => loginAs('admin')}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left hover:bg-purple-50 text-slate-700 hover:text-purple-900 transition-colors cursor-pointer"
-                >
-                  <span className="p-1 rounded bg-purple-100 text-purple-700 font-bold text-xs">🏛️</span>
-                  <div>
-                    <div className="font-bold text-slate-900">Institution Admin Demo</div>
-                    <div className="text-[10px] text-slate-500">Dr. Ananya Iyer • Dean</div>
-                  </div>
-                </button>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
-        {/* Minimal Right Header Info */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400 hidden md:inline font-medium">
-            Next-Gen Skill Intelligence
-          </span>
+        {/* Right Header CTA on Landing */}
+        <div className="flex items-center gap-2 shrink-0">
+          <Button
+            variant="primary"
+            size="xs"
+            className="font-bold text-xs px-3 py-1.5 rounded-lg shadow-xs"
+            onClick={() => onOpenAuth()}
+          >
+            Sign In / Join
+          </Button>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative px-4 sm:px-8 pt-8 sm:pt-12 pb-16 sm:pb-20 max-w-7xl mx-auto overflow-hidden">
+      <section className="relative px-3.5 sm:px-8 pt-6 sm:pt-12 pb-12 sm:pb-20 max-w-7xl mx-auto overflow-hidden">
         {/* Ambient background glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[700px] h-[200px] sm:h-[350px] bg-gradient-to-tr from-brand-200/40 via-cyan-200/30 to-indigo-200/40 rounded-full blur-3xl pointer-events-none -z-10" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[700px] h-[180px] sm:h-[350px] bg-gradient-to-tr from-brand-200/40 via-cyan-200/30 to-indigo-200/40 rounded-full blur-3xl pointer-events-none -z-10" />
 
         <div className="text-center max-w-3xl mx-auto space-y-4 sm:space-y-5">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-[11px] sm:text-xs font-bold shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-brand-600" />
+            <Sparkles className="w-3.5 h-3.5 text-brand-600 shrink-0" />
             <span>Smart Skill-to-Industry Integration Portal</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.15]">
+          <h1 className="text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.18]">
             Turn Your Skills <br />
             <span className="text-gradient">Into Opportunities.</span>
           </h1>
 
-          <p className="text-xs sm:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed px-1">
             Discover your verified skill gaps, build industry-ready capabilities with targeted learning, and connect with high-match internships and careers.
           </p>
 
-          {/* Single Central Primary CTA: Sign In / Register */}
-          <div className="flex items-center justify-center pt-3">
+          {/* Central Primary CTA */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Button
               variant="primary"
               size="lg"
-              className="font-bold shadow-lg shadow-brand-500/25 px-8 py-3.5 text-sm sm:text-base rounded-xl"
+              className="w-full sm:w-auto font-bold shadow-lg shadow-brand-500/25 px-8 py-3 text-sm sm:text-base rounded-xl"
               icon={<ArrowRight className="w-4 h-4" />}
               iconPosition="right"
               onClick={() => onOpenAuth()}
             >
               Sign In / Register →
             </Button>
+          </div>
+
+          {/* Quick Mobile 1-Tap Persona Launcher */}
+          <div className="pt-3">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+              Or Explore with Instant 1-Click Demo:
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-2xl mx-auto">
+              <button
+                type="button"
+                onClick={() => loginAs('student')}
+                className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 hover:border-blue-300 hover:bg-blue-50/50 text-left transition-all shadow-2xs group cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="text-sm">👨‍🎓</span>
+                  <span className="font-bold text-slate-900 text-xs group-hover:text-blue-700">Student</span>
+                </div>
+                <div className="text-[10px] text-slate-500 truncate">Skills & Jobs</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => loginAs('industry')}
+                className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all shadow-2xs group cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="text-sm">🏢</span>
+                  <span className="font-bold text-slate-900 text-xs group-hover:text-emerald-700">Industry</span>
+                </div>
+                <div className="text-[10px] text-slate-500 truncate">Hiring & ATS</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => loginAs('faculty')}
+                className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 hover:border-indigo-300 hover:bg-indigo-50/50 text-left transition-all shadow-2xs group cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="text-sm">🎓</span>
+                  <span className="font-bold text-slate-900 text-xs group-hover:text-indigo-700">Faculty</span>
+                </div>
+                <div className="text-[10px] text-slate-500 truncate">Cohort Heatmap</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => loginAs('admin')}
+                className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 hover:border-purple-300 hover:bg-purple-50/50 text-left transition-all shadow-2xs group cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="text-sm">🏛️</span>
+                  <span className="font-bold text-slate-900 text-xs group-hover:text-purple-700">Admin</span>
+                </div>
+                <div className="text-[10px] text-slate-500 truncate">MoUs & KPIs</div>
+              </button>
+            </div>
           </div>
         </div>
 

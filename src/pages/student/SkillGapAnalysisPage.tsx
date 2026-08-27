@@ -60,12 +60,12 @@ export const SkillGapAnalysisPage: React.FC = () => {
         </div>
 
         {/* Quick Career Selector Dropdown */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full md:w-auto">
           <label className="text-xs font-bold text-slate-500 whitespace-nowrap">Target Career:</label>
           <select
             value={selectedCareerId}
             onChange={e => handleCareerChange(e.target.value)}
-            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-white border border-slate-300 text-slate-900 shadow-2xs focus:ring-2 focus:ring-brand-500 focus:outline-none cursor-pointer"
+            className="w-full sm:w-auto px-3 py-2 sm:py-1.5 rounded-lg text-xs font-bold bg-white border border-slate-300 text-slate-900 shadow-2xs focus:ring-2 focus:ring-brand-500 focus:outline-none cursor-pointer"
           >
             {CAREER_PATHS.map(cp => (
               <option key={cp.id} value={cp.id}>
