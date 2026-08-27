@@ -199,12 +199,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
             <Button
               variant="primary"
               size="lg"
-              className="w-full sm:w-auto font-bold shadow-lg shadow-brand-500/25 px-8 py-3 text-sm sm:text-base rounded-xl"
-              icon={<ArrowRight className="w-4 h-4" />}
+              className="w-full sm:w-auto font-bold shadow-lg shadow-brand-500/25 px-8 py-3.5 text-sm sm:text-base rounded-xl"
+              icon={<ArrowRight className="w-5 h-5" />}
               iconPosition="right"
               onClick={() => onOpenAuth()}
             >
-              Sign In / Register →
+              Sign In / Register
             </Button>
           </div>
 
